@@ -1,0 +1,5 @@
+{
+  "name": "Project Schedule Manager",
+  "description": "An interactive, Excel-like project schedule management tool to easily track tasks, deadlines, and responsibilities directly in your browser.",
+  "requestFramePermissions": []
+}
