@@ -32,12 +32,12 @@ const TableHeader: React.FC<{
     <tr>
       {/* Ungrouped columns */}
       <th scope="col" rowSpan={2} className="px-3 py-3 text-left w-28 border-b border-r border-gray-700">Actions</th>
-      <th scope="col" rowSpan={2} className="px-6 py-3 text-left w-24 border-b border-r border-gray-700">Task ID</th>
-      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700 min-w-[20rem]">Task Name</th>
-      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">Assignee</th>
-      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">Deliverable Name</th>
-      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">Deliverables</th>
-      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">Status</th>
+      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700 whitespace-nowrap">레벨</th>
+      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700 min-w-[20rem]">업무명</th>
+      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">담당자</th>
+      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">산출물</th>
+      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">첨부</th>
+      <th scope="col" rowSpan={2} className="px-6 py-3 text-left border-b border-r border-gray-700">진행상태</th>
 
       {/* Plan Group Header */}
       <th scope="colgroup" colSpan={4} className="px-6 py-3 text-center border-b border-x border-gray-700">
@@ -62,10 +62,10 @@ const TableHeader: React.FC<{
     </tr>
     <tr>
       {/* Plan Group Columns */}
-      <th scope="col" className="px-6 py-3 text-left border-r border-gray-700">Start Date</th>
-      <th scope="col" className="px-6 py-3 text-left border-r border-gray-700">End Date</th>
-      <th scope="col" className="px-6 py-3 text-left border-r border-gray-700">Duration</th>
-      <th scope="col" className="px-6 py-3 text-left">Planned Progress</th>
+      <th scope="col" className="px-6 py-3 text-left border-r border-gray-700">시작일</th>
+      <th scope="col" className="px-6 py-3 text-left border-r border-gray-700">종료일</th>
+      <th scope="col" className="px-6 py-3 text-left border-r border-gray-700 whitespace-nowrap">기간</th>
+      <th scope="col" className="px-6 py-3 text-left">[계획]진척률</th>
 
       {/* Performance Group Columns */}
       {departments.map((dep) => (
@@ -93,7 +93,7 @@ const TableHeader: React.FC<{
            </div>
         </th>
       ))}
-      <th scope="col" className="px-6 py-3 text-left">Overall Progress</th>
+      <th scope="col" className="px-6 py-3 text-left">[실적]진척률</th>
     </tr>
   </thead>
 )};

@@ -1,14 +1,19 @@
 import React from 'react';
 import { PlusIcon } from './icons/PlusIcon';
+import { User } from '../types';
+import { UserIcon } from './icons/UserIcon';
+import { LogoutIcon } from './icons/LogoutIcon';
 
 interface HeaderProps {
   projectName?: string;
+  user?: User | null;
   onGoBack?: () => void;
   onAddTask?: () => void;
   onAddDepartment?: () => void;
+  onLogout?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ projectName, onGoBack, onAddTask, onAddDepartment }) => {
+export const Header: React.FC<HeaderProps> = ({ projectName, user, onGoBack, onAddTask, onAddDepartment, onLogout }) => {
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -35,24 +40,44 @@ export const Header: React.FC<HeaderProps> = ({ projectName, onGoBack, onAddTask
           Today is <span className="font-semibold">{currentDate}</span>.
         </p>
       </div>
-      <div className="flex items-center gap-2">
-        {onAddDepartment && (
-            <button
-                onClick={onAddDepartment}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-600 rounded-md shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 transition-colors"
-            >
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+            {onAddDepartment && (
+                <button
+                    onClick={onAddDepartment}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-600 rounded-md shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 transition-colors"
+                >
+                    <PlusIcon className="w-5 h-5" />
+                    <span>Add Department</span>
+                </button>
+            )}
+            {onAddTask && (
+                <button
+                onClick={onAddTask}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
+                >
                 <PlusIcon className="w-5 h-5" />
-                <span>Add Department</span>
-            </button>
-        )}
-        {onAddTask && (
-            <button
-            onClick={onAddTask}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
-            >
-            <PlusIcon className="w-5 h-5" />
-            <span>Add Task</span>
-            </button>
+                <span>Add Task</span>
+                </button>
+            )}
+        </div>
+        {user && onLogout && (
+          <>
+            <div className="h-8 border-l border-gray-300"></div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-sm">
+                <UserIcon className="w-6 h-6 text-gray-500" />
+                <span className="font-medium text-gray-700">{user.username}</span>
+              </div>
+              <button
+                onClick={onLogout}
+                className="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-md shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300 transition-colors"
+              >
+                <LogoutIcon className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </>
         )}
       </div>
     </header>

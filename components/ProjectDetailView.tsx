@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ProjectTable } from './ProjectTable';
 import { Header } from './Header';
-import { Task, Status, Project } from '../types';
+import { Task, Status, Project, User } from '../types';
 import { TaskModal } from './TaskModal';
 import { InputDialog } from './InputDialog';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -12,8 +12,10 @@ import { ScheduleSummary } from './ScheduleSummary';
 
 interface ProjectDetailViewProps {
     project: Project;
+    user: User;
     onGoBack: () => void;
     onUpdateProject: (project: Project) => void;
+    onLogout: () => void;
 }
 
 const recalculateTaskIdsAndProgress = (tasks: Task[], departments: {name: string; weight: number}[]): Task[] => {
@@ -67,7 +69,7 @@ const recalculateTaskIdsAndProgress = (tasks: Task[], departments: {name: string
 };
 
 
-export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({ project, onGoBack, onUpdateProject }) => {
+export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({ project, user, onGoBack, onUpdateProject, onLogout }) => {
   const [tasks, setTasks] = useState<Task[]>(project.tasks);
   const [departments, setDepartments] = useState<{ name: string; weight: number }[]>(project.departments);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -289,10 +291,12 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({ project, o
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <Header 
-            projectName={project.name} 
+            projectName={project.name}
+            user={user}
             onGoBack={onGoBack} 
             onAddTask={activeView === 'schedule' ? handleAddTask : undefined} 
             onAddDepartment={activeView === 'schedule' ? () => setIsAddDeptModalOpen(true) : undefined}
+            onLogout={onLogout}
         />
         <main className="mt-8">
             <div className="mb-4 border-b border-gray-200">

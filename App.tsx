@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { Project, Task, Status } from './types';
+import { Project, Task, Status, User } from './types';
 import { ProjectListView } from './components/ProjectListView';
 import { ProjectDetailView } from './components/ProjectDetailView';
+import { LoginView } from './components/LoginView';
 
 const initialTasksData = [
     {
@@ -165,6 +166,10 @@ const initialProjects: Project[] = [
 const App: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>(initialProjects);
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+    const [registeredUsers, setRegisteredUsers] = useState<(User & { password: string })[]>([
+        { username: 'testuser', password: 'password123' }
+    ]);
+    const [user, setUser] = useState<User | null>(null);
     
     const handleAddProject = useCallback((name: string, description: string, period: string, type: string, goal: string) => {
         const newProject: Project = {
@@ -198,22 +203,55 @@ const App: React.FC = () => {
         setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
     }, []);
 
+    const handleLogin = useCallback((username: string, password: string): string | null => {
+        const foundUser = registeredUsers.find(u => u.username === username);
+        if (foundUser && foundUser.password === password) {
+            setUser({ username });
+            return null; // Success
+        }
+        return 'Invalid username or password.'; // Failure
+    }, [registeredUsers]);
+    
+    const handleSignUp = useCallback((username: string, password: string): string | null => {
+        const userExists = registeredUsers.some(u => u.username === username);
+        if (userExists) {
+            return 'Username already exists.';
+        }
+        const newUser = { username, password };
+        setRegisteredUsers(prev => [...prev, newUser]);
+        setUser({ username });
+        return null;
+    }, [registeredUsers]);
+
+
+    const handleLogout = useCallback(() => {
+        setUser(null);
+    }, []);
+
     const selectedProject = projects.find(p => p.id === selectedProjectId);
+    
+    if (!user) {
+        return <LoginView onLogin={handleLogin} onSignUp={handleSignUp} />;
+    }
     
     if (selectedProject) {
         return <ProjectDetailView 
                     project={selectedProject} 
+                    user={user}
                     onGoBack={handleGoBackToProjects} 
-                    onUpdateProject={handleUpdateProject} 
+                    onUpdateProject={handleUpdateProject}
+                    onLogout={handleLogout}
                 />
     }
 
     return (
         <ProjectListView 
             projects={projects}
+            user={user}
             onAddProject={handleAddProject}
             onDeleteProject={handleDeleteProject}
             onSelectProject={handleSelectProject}
+            onLogout={handleLogout}
         />
     );
 };

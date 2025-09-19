@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Project } from '../types';
+import { Project, User } from '../types';
 import { Header } from './Header';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
@@ -9,12 +9,14 @@ import { SearchIcon } from './icons/SearchIcon';
 
 interface ProjectListViewProps {
     projects: Project[];
+    user: User;
     onAddProject: (name: string, description: string, period: string, type: string, goal: string) => void;
     onDeleteProject: (projectId: string) => void;
     onSelectProject: (projectId: string) => void;
+    onLogout: () => void;
 }
 
-export const ProjectListView: React.FC<ProjectListViewProps> = ({ projects, onAddProject, onDeleteProject, onSelectProject }) => {
+export const ProjectListView: React.FC<ProjectListViewProps> = ({ projects, user, onAddProject, onDeleteProject, onSelectProject, onLogout }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newProjectName, setNewProjectName] = useState('');
@@ -87,7 +89,7 @@ export const ProjectListView: React.FC<ProjectListViewProps> = ({ projects, onAd
     return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-            <Header />
+            <Header user={user} onLogout={onLogout} />
             <main className="mt-8">
                 <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                      <div className="relative flex-grow sm:flex-grow-0">

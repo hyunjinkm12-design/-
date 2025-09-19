@@ -64,3 +64,7 @@ export interface Project {
   charter: ProjectCharter;
   team: TeamMember[];
 }
+
+export interface User {
+  username: string;
+}
