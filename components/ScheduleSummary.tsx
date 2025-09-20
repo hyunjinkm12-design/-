@@ -5,6 +5,7 @@ import { CircularProgressBar } from './CircularProgressBar';
 interface ScheduleSummaryProps {
   tasks: Task[];
   departments: { name: string; weight: number }[];
+  baselineDate: string;
 }
 
 // Helper function to calculate a single task's weighted overall progress
@@ -46,8 +47,24 @@ const calculateProjectOverallProgress = (tasks: Task[], departments: { name: str
     return Math.round(weightedProgressSum / totalDuration);
 };
 
+const calculatePlannedProgress = (start: string, end: string, baseline: string): number => {
+    const today = new Date(baseline);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    today.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) return 0;
+    if (today < startDate) return 0;
+    if (today >= endDate) return 100;
+    const totalDuration = endDate.getTime() - startDate.getTime();
+    if (totalDuration === 0) return 100;
+    const elapsedDuration = today.getTime() - startDate.getTime();
+    return Math.round((elapsedDuration / totalDuration) * 100);
+};
 
-export const ScheduleSummary: React.FC<ScheduleSummaryProps> = ({ tasks, departments }) => {
+
+export const ScheduleSummary: React.FC<ScheduleSummaryProps> = ({ tasks, departments, baselineDate }) => {
     if (tasks.length === 0) {
         return null; // Don't show summary if there are no tasks
     }
@@ -61,8 +78,9 @@ export const ScheduleSummary: React.FC<ScheduleSummaryProps> = ({ tasks, departm
 
     const delayedTasksCount = tasks.filter(task => {
         const overall = calculateTaskOverallProgress(task, departments);
+        const planned = calculatePlannedProgress(task.startDate, task.endDate, baselineDate);
         // A task is delayed if its actual progress is less than its planned progress
-        return overall < task.plannedProgress;
+        return overall < planned;
     }).length;
 
     return (

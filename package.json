@@ -1,5 +1,5 @@
 {
-  "name": "project-schedule-manager",
+  "name": "project-schedule-manager-(db연결)",
   "private": true,
   "version": "0.0.0",
   "type": "module",

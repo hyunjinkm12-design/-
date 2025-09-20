@@ -74,7 +74,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       type={type} 
       ref={inputRef as React.Ref<HTMLInputElement>}
       // The className is changed to remove w-full, allowing size to work.
-      className="px-2 py-1 border border-indigo-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
+      className="px-2 py-1 border border-indigo-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-center"
       // Auto-adjust width based on content length, with a minimum size.
       size={Math.max(String(currentValue).length, 10)}
     />;
@@ -86,7 +86,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   return (
     <div 
-      className={`min-h-[2.25rem] flex items-center w-full ${readOnly ? 'text-gray-500' : 'cursor-pointer'}`} 
+      className={`min-h-[2.25rem] flex items-center justify-center w-full ${readOnly ? 'text-gray-500' : 'cursor-pointer'}`} 
       onClick={() => !readOnly && setIsEditing(true)}
       title={readOnly ? 'Progress is calculated from sub-tasks and cannot be edited directly.' : ''}
     >

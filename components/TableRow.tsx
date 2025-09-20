@@ -11,6 +11,7 @@ import { DragHandleIcon } from './icons/DragHandleIcon';
 interface TableRowProps {
   task: Task;
   departments: { name: string; weight: number }[];
+  baselineDate: string;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onAddSubTask: (parentId: string) => void;
@@ -25,6 +26,7 @@ interface TableRowProps {
 export const TableRow: React.FC<TableRowProps> = ({ 
   task, 
   departments,
+  baselineDate,
   onUpdateTask, 
   onDeleteTask, 
   onAddSubTask,
@@ -63,8 +65,8 @@ export const TableRow: React.FC<TableRowProps> = ({
     return diffDays;
   };
 
-  const calculatePlannedProgress = (start: string, end: string): number => {
-    const today = new Date();
+  const calculatePlannedProgress = (start: string, end: string, baseline: string): number => {
+    const today = new Date(baseline);
     const startDate = new Date(start);
     const endDate = new Date(end);
 
@@ -136,7 +138,7 @@ export const TableRow: React.FC<TableRowProps> = ({
   };
 
   const duration = calculateDuration(task.startDate, task.endDate);
-  const plannedProgress = calculatePlannedProgress(task.startDate, task.endDate);
+  const plannedProgress = calculatePlannedProgress(task.startDate, task.endDate, baselineDate);
   const overallProgress = calculateOverallProgress();
   const overallProgressColor = overallProgress >= 100 ? 'bg-green-600' : 'bg-blue-600';
   
@@ -152,10 +154,10 @@ export const TableRow: React.FC<TableRowProps> = ({
 
   // Colors get lighter as the level increases (gets deeper)
   const levelColors = [
-    'bg-gray-200',    // level 0
-    'bg-gray-100',    // level 1
-    'bg-gray-50',     // level 2
-    'bg-white',       // level 3 and deeper
+    'bg-gray-300',    // level 0
+    'bg-gray-200',    // level 1
+    'bg-gray-100',    // level 2
+    'bg-gray-50',     // level 3 and deeper
   ];
   const rowBaseClass = levelColors[Math.min(level, levelColors.length - 1)];
   const dragOverClass = isDragOver ? 'outline outline-2 outline-offset-[-2px] outline-indigo-500' : '';
@@ -168,7 +170,7 @@ export const TableRow: React.FC<TableRowProps> = ({
         onDrop={handleDrop}
     >
       {/* Ungrouped */}
-      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium border-r border-gray-200">
+      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium border-r-2 border-gray-400">
         <div className="flex items-center justify-center gap-2">
            <button 
                 onDragStart={handleDragStart}
@@ -186,9 +188,9 @@ export const TableRow: React.FC<TableRowProps> = ({
           </button>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500 border-r border-gray-200">{task.id}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500 border-r border-gray-200 text-center">{task.id}</td>
       <td 
-        className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 min-w-[20rem]"
+        className="px-6 py-4 text-sm text-gray-700 border-r border-gray-200"
       >
         <div className="flex items-center" style={{ paddingLeft: `${level * 24}px` }}>
             {hasChildren ? (
@@ -200,19 +202,19 @@ export const TableRow: React.FC<TableRowProps> = ({
             )}
              <div
               onClick={() => onSelectTask(task)}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
-              title="Click to see details and edit"
+              className="cursor-pointer hover:text-indigo-600 hover:underline truncate"
+              title={task.name}
             >
               {task.name}
             </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200"><EditableCell value={task.assignee} onSave={(value) => handleUpdate('assignee', value)} /></td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-center"><EditableCell value={task.assignee} onSave={(value) => handleUpdate('assignee', value)} /></td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-center">
         <EditableCell value={task.deliverableName} onSave={(value) => handleUpdate('deliverableName', value)} />
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center gap-4">
             <span className="text-gray-500">{totalFiles} file(s)</span>
             <button
                 onClick={() => onSelectTaskForDeliverables(task)}
@@ -222,7 +224,7 @@ export const TableRow: React.FC<TableRowProps> = ({
             </button>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r-2 border-gray-400">
         <EditableCell
           type="select"
           value={task.status}
@@ -237,12 +239,16 @@ export const TableRow: React.FC<TableRowProps> = ({
       </td>
       
       {/* Plan Group */}
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200"><EditableCell type="date" value={task.startDate} onSave={(value) => handleUpdate('startDate', value)} /></td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200"><EditableCell type="date" value={task.endDate} onSave={(value) => handleUpdate('endDate', value)} /></td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+        <EditableCell type="date" value={task.startDate} onSave={(value) => handleUpdate('startDate', value)} readOnly={hasChildren} />
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+        <EditableCell type="date" value={task.endDate} onSave={(value) => handleUpdate('endDate', value)} readOnly={hasChildren} />
+      </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center border-r border-gray-200">{duration > 0 ? `${duration}d` : '-'}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 w-40 border-r border-gray-300">
-        <div className="flex items-center gap-2">
-            <span className="font-mono text-xs w-8 text-right">{plannedProgress}%</span>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r-2 border-gray-400">
+        <div className="flex items-center justify-center gap-2">
+            <span className="font-mono text-xs w-8 text-center">{plannedProgress}%</span>
             <ProgressBar progress={plannedProgress} color="bg-gray-400" />
         </div>
       </td>
@@ -258,20 +264,20 @@ export const TableRow: React.FC<TableRowProps> = ({
             />
         </td>
       ))}
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 w-48 border-r border-gray-300">
-        <div className="flex items-center gap-2">
-            <span className="font-mono text-xs w-8 text-right">{overallProgress}%</span>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r-2 border-gray-400">
+        <div className="flex items-center justify-center gap-2">
+            <span className="font-mono text-xs w-8 text-center">{overallProgress}%</span>
             <ProgressBar progress={overallProgress} color={overallProgressColor} />
         </div>
       </td>
 
       {/* GAP */}
-      <td className={`px-6 py-4 whitespace-nowrap text-sm text-center font-mono border-r border-gray-300 ${gapColor}`}>
+      <td className={`px-6 py-4 whitespace-nowrap text-sm text-center font-mono border-r-2 border-gray-400 ${gapColor}`}>
         {gap > 0 ? `+${gap}` : gap}%
       </td>
       
       {/* Ungrouped */}
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300"><EditableCell value={task.notes} onSave={(value) => handleUpdate('notes', value)} /></td>
+      <td className="px-6 py-4 text-sm text-gray-700 border-r border-gray-300 text-center"><EditableCell value={task.notes} onSave={(value) => handleUpdate('notes', value)} /></td>
     </tr>
   );
 };

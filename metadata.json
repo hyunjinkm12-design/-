@@ -1,5 +1,5 @@
 {
-  "name": "Project Schedule Manager",
+  "name": " Project Schedule Manager (db연결)",
   "description": "An interactive, Excel-like project schedule management tool to easily track tasks, deadlines, and responsibilities directly in your browser.",
   "requestFramePermissions": []
 }

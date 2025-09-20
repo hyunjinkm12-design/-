@@ -1,3 +1,5 @@
+// FIX: Removed a self-referential import of the 'Status' enum.
+// This was causing a declaration conflict with the 'Status' enum defined in this file.
 export enum Status {
   NotStarted = 'Not Started',
   InProgress = 'In Progress',
@@ -50,13 +52,16 @@ export interface TeamMember {
   parentId: string | null;
   name: string;
   role: string;
+  nodeColor?: string;
+  textColor?: string;
 }
 
 export interface Project {
   id: string;
   name: string;
   description: string;
-  period: string;
+  startDate: string;
+  endDate: string;
   type: string;
   goal: string;
   tasks: Task[];
@@ -66,5 +71,7 @@ export interface Project {
 }
 
 export interface User {
-  username: string;
+  uid: string;
+  email: string;
+  displayName: string | null;
 }
